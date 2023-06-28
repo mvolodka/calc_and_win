@@ -77,15 +77,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=('POST',),
-        permission_classes=[IsAuthenticated])
+        permission_classes=[IsAuthenticated]
+    )
     def shopping_cart(self, request, pk):
-        context = {'request': request}
         recipe = get_object_or_404(Recipe, id=pk)
         data = {
             'user': request.user.id,
             'recipe': recipe.id
         }
-        serializer = ShoppingCartSerializer(data=data, context=context)
+        serializer = ShoppingCartSerializer(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -102,15 +102,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=('POST',),
-        permission_classes=[IsAuthenticated])
+        permission_classes=[IsAuthenticated]
+    )
     def favorite(self, request, pk):
-        context = {"request": request}
         recipe = get_object_or_404(Recipe, id=pk)
         data = {
             'user': request.user.id,
             'recipe': recipe.id
         }
-        serializer = FavoriteSerializer(data=data, context=context)
+        serializer = FavoriteSerializer(data=data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -126,8 +126,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(UserViewSet):
+  """Вьюсет для работы с пользователями."""
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = CustomUserSerializer
     pagination_class = CustomPagination
 
     @action(
